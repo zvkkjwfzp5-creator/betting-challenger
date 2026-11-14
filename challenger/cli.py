@@ -42,14 +42,18 @@ def cmd_report(a):
 
 
 def cmd_live(a):
-    """Today's model numbers from current results (NHL)."""
-    from . import live_nhl
+    """Today's model numbers from current results (NHL or NBA)."""
     from datetime import datetime
     from zoneinfo import ZoneInfo
     day = a.date or datetime.now(ZoneInfo("America/Edmonton")).date().isoformat()
+    if a.sport == "nba":
+        from . import live_nba
+        lines = {k: tuple(v) for k, v in json.loads(a.lines).items()} if a.lines else None
+        print(live_nba.table(live_nba.predict(day, _cfg(a.config)), lines))
+        return
+    from . import live_nhl
     prices = {k: tuple(v) for k, v in json.loads(a.prices).items()} if a.prices else None
-    out = live_nhl.predict(day, _cfg(a.config))
-    print(live_nhl.table(out, prices))
+    print(live_nhl.table(live_nhl.predict(day, _cfg(a.config)), prices))
 
 
 def cmd_price(a):
@@ -143,9 +147,10 @@ def main():
     b.set_defaults(fn=cmd_backtest)
     lv = sub.add_parser("live")
     lv.add_argument("--config", default="config.toml")
-    lv.add_argument("--sport", default="nhl", choices=["nhl"])
+    lv.add_argument("--sport", default="nhl", choices=["nhl", "nba"])
+    lv.add_argument("--lines", help='NBA: JSON of (home spread, total), e.g. {"Knicks@Pacers": [-3.5, 228.5]}')
     lv.add_argument("--date", help="YYYY-MM-DD in Mountain Time; default today")
-    lv.add_argument("--prices", help='JSON of decimal prices, e.g. {"Rangers@Canucks": [1.80, 2.05]} (home, away)')
+    lv.add_argument("--prices", help='NHL: JSON of decimal prices, e.g. {"Rangers@Canucks": [1.80, 2.05]} (home, away)')
     lv.set_defaults(fn=cmd_live)
     r = sub.add_parser("report")
     r.set_defaults(fn=cmd_report)

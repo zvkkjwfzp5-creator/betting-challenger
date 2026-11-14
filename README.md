@@ -43,8 +43,9 @@ challenger/
   twoway.py      shared walk-forward harness for two-outcome markets
   mathx.py       normal CDF, logistic fit
   live_nhl.py    daily NHL model numbers from the NHL schedule feed
+  live_nba.py    daily NBA model numbers from ESPN's scoreboard feed
   report.py      short summaries;  cli.py  entry points
-tests/           47 tests (leak checks, settlement, pushes, shrinkage, selection)
+tests/           51 tests (leak checks, settlement, pushes, shrinkage, selection)
 config.toml      every tunable and search grid
 ```
 
@@ -85,9 +86,15 @@ Daily NHL model numbers from this season's results (needs network access to
 python -m challenger.cli live --date 2026-11-14 --prices '{"Red Wings@Lightning": [1.50, 2.76]}'
 ```
 
-Prices are optional decimal prices as (home, away), keyed "Away@Home". The
-output is information for a manual decision: the back-test found no edge.
-NBA has no live step yet: the official NBA feed refuses automated access.
+```bash
+python -m challenger.cli live --sport nba --date 2026-11-14 --lines '{"Bulls@Timberwolves": [-13.5, 231.5]}'
+```
+
+NHL prices are optional decimal prices as (home, away); NBA lines are
+optional (home spread, total); both keyed "Away@Home". NBA results come from
+ESPN's public scoreboard feed (`site.api.espn.com`) and are kept in
+`live/nba_results.csv`. The output is information for a manual decision: the
+back-test found no edge.
 
 First runs fit every candidate setting and cache it under `data/` (soccer
 about 11 minutes, NHL 2, NBA 1, UFC about 25 on 4 cores). Data files are
