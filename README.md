@@ -45,7 +45,7 @@ challenger/
   live_nhl.py    daily NHL model numbers from the NHL schedule feed
   live_nba.py    daily NBA model numbers from ESPN's scoreboard feed
   report.py      short summaries;  cli.py  entry points
-tests/           51 tests (leak checks, settlement, pushes, shrinkage, selection)
+tests/           56 tests (leak checks, settlement, pushes, shrinkage, selection)
 config.toml      every tunable and search grid
 ```
 
@@ -89,6 +89,13 @@ python -m challenger.cli live --date 2026-11-14 --prices '{"Red Wings@Lightning"
 ```bash
 python -m challenger.cli live --sport nba --date 2026-11-14 --lines '{"Bulls@Timberwolves": [-13.5, 231.5]}'
 ```
+
+Scheduled tasks run on a network that blocks the score feeds, so everything
+the live commands need is stored in `live/`: the archive to June 2022,
+results since, and the coming week's fixtures. `python -m challenger.cli
+refresh` updates those files from the feeds (run daily by a separate job that
+commits them); `live` uses the feeds when it can reach them and otherwise the
+stored copy, and says which it used and how recent the results are.
 
 NHL prices are optional decimal prices as (home, away); NBA lines are
 optional (home spread, total); both keyed "Away@Home". NBA results come from

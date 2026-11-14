@@ -20,7 +20,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .data_us import load_sbr
 from .dynamic import FilterParams, run_filter
 from .mathx import sigmoid
 from .predictive import rate_draws, standard_draws
@@ -28,6 +27,8 @@ from .scoregrid import ScoreGrid
 
 FEED = "https://api-web.nhle.com/v1/schedule/{}"
 RESULTS = Path("live/nhl_results.csv")
+FIXTURES = Path("live/nhl_fixtures.csv")
+HISTORY = Path("live/nhl_history.csv")      # archive to June 2022, stored in the repository
 FIRST_LIVE_DATE = "2022-10-01"
 # feed name -> name used in the archive (the Utah club is the relocated Coyotes roster)
 NAME_FIX = {"Utah Hockey Club": "Coyotes", "Mammoth": "Coyotes", "Hockey Club": "Coyotes"}
@@ -76,7 +77,24 @@ def update_results(path: Path = RESULTS, today: str | None = None, fetch=_get) -
     allr = pd.concat([old, new]).drop_duplicates("game_id", keep="last").sort_values(["date", "game_id"])
     path.parent.mkdir(parents=True, exist_ok=True)
     allr[allr.final].to_csv(path, index=False)
+    allr[~allr.final.astype(bool)].to_csv(path.with_name(FIXTURES.name), index=False)
     return allr.reset_index(drop=True)
+
+
+def stored(path: Path = RESULTS) -> pd.DataFrame:
+    """Results and fixtures already saved in the repository (no network)."""
+    parts = [pd.read_csv(f) for f in (path, path.with_name(FIXTURES.name)) if f.exists()]
+    return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+
+
+def load_live(day: str, offline: bool = False) -> tuple[pd.DataFrame, str]:
+    """Current results: from the feed when it can be reached, else the stored copy."""
+    if not offline:
+        try:
+            return update_results(today=day), "feed"
+        except OSError:                       # network blocked or feed down
+            pass
+    return stored(), "stored copy"
 
 
 def settings(report: str = "reports/nhl.json") -> dict:
@@ -91,16 +109,20 @@ def settings(report: str = "reports/nhl.json") -> dict:
             "tie_inflation": last["tie_inflation"], "ot": last["ot"], "pool": pool[max(pool, key=int)]["theta"]}
 
 
-def predict(day: str, cfg: dict, results: pd.DataFrame | None = None, draws: int = 2000) -> pd.DataFrame:
+def predict(day: str, cfg: dict, results: pd.DataFrame | None = None, draws: int = 2000,
+            offline: bool = False) -> pd.DataFrame:
     """Model probabilities for the games on `day` (local date of the feed)."""
     s = settings()
     c = cfg["nhl"]
-    hist = load_sbr(c["path"], "nhl")[["season", "date", "home", "away", "hg", "ag"]]
-    live = update_results(today=day) if results is None else results
+    hist = pd.read_csv(HISTORY, parse_dates=["date"])
+    live, source = load_live(day, offline) if results is None else (results, "given")
+    if live.empty:
+        return live
     played = live[live.final & (live.date < day)].copy()
     played["date"] = pd.to_datetime(played.date)
     fixtures = live[live.date == day].copy()
     if fixtures.empty:
+        fixtures.attrs["results_to"] = str(played.date.max().date()) if len(played) else "n/a"
         return fixtures
     fx = fixtures.assign(date=pd.Timestamp(day), hg=0, ag=0)        # placeholder scores, never learned from:
     df = pd.concat([hist, played[hist.columns], fx[hist.columns]], ignore_index=True)   # same-day games are
@@ -126,6 +148,7 @@ def predict(day: str, cfg: dict, results: pd.DataFrame | None = None, draws: int
                                 for h in out.home]
     out.attrs["pool"] = s["pool"]
     out.attrs["results_to"] = str(played.date.max().date())
+    out.attrs["source"] = source
     return out
 
 
@@ -141,8 +164,9 @@ def combine_with_market(model_home: float, home_price: float, away_price: float,
 
 def table(out: pd.DataFrame, prices: dict | None = None) -> str:
     if out.empty:
-        return "No NHL games on that date."
-    L = [f"NHL model numbers (results to {out.attrs['results_to']}). Home-win probability incl. overtime.",
+        return f"No NHL games on that date (stored results to {out.attrs.get('results_to', 'n/a')})."
+    L = [f"NHL model numbers (results to {out.attrs['results_to']}, from the {out.attrs.get('source', 'feed')}). "
+         "Home-win probability incl. overtime.",
          "Information only: the back-test found no edge over the market price.", "",
          "| Start (MT) | Game | Model home % | 90% range | Market home % | Market + model % | Reg. draw % | Exp. goals |",
          "|---|---|---|---|---|---|---|---|"]

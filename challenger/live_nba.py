@@ -18,13 +18,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .data_us import load_sbr
 from .gaussian import GaussParams, run_gauss_filter
 from .mathx import ndtr
 from .nba import line_probs
 
 FEED = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates={}&limit=1000"
 RESULTS = Path("live/nba_results.csv")
+FIXTURES = Path("live/nba_fixtures.csv")
+HISTORY = Path("live/nba_history.csv")      # archive to June 2022, stored in the repository
 FIRST_LIVE_MONTH = "2022-10"
 NAME_FIX = {"76ers": "Seventysixers", "Trail Blazers": "Trailblazers"}
 TEAMS = {"Bucks", "Bulls", "Cavaliers", "Celtics", "Clippers", "Grizzlies", "Hawks", "Heat", "Hornets", "Jazz",
@@ -81,7 +82,23 @@ def update_results(path: Path = RESULTS, today: str | None = None, fetch=_get) -
     allr = pd.concat([old, pd.DataFrame(rows)]).drop_duplicates("game_id", keep="last").sort_values(["date", "game_id"])
     path.parent.mkdir(parents=True, exist_ok=True)
     allr[allr.final].to_csv(path, index=False)
+    allr[~allr.final.astype(bool)].to_csv(path.with_name(FIXTURES.name), index=False)
     return allr.reset_index(drop=True)
+
+
+def stored(path: Path = RESULTS) -> pd.DataFrame:
+    parts = [pd.read_csv(f) for f in (path, path.with_name(FIXTURES.name)) if f.exists()]
+    return pd.concat(parts, ignore_index=True) if parts else pd.DataFrame()
+
+
+def load_live(day: str, offline: bool = False) -> tuple[pd.DataFrame, str]:
+    """Current results: from the feed when it can be reached, else the stored copy."""
+    if not offline:
+        try:
+            return update_results(today=day), "feed"
+        except OSError:
+            pass
+    return stored(), "stored copy"
 
 
 def add_b2b(df: pd.DataFrame) -> pd.DataFrame:
@@ -104,15 +121,18 @@ def settings(report: str = "reports/nba.json") -> dict:
             "margin_sd": last["margin_sd"], "total_sd": last["total_sd"]}
 
 
-def predict(day: str, cfg: dict, results: pd.DataFrame | None = None) -> pd.DataFrame:
+def predict(day: str, cfg: dict, results: pd.DataFrame | None = None, offline: bool = False) -> pd.DataFrame:
     s = settings()
     cols = ["season", "date", "home", "away", "hg", "ag"]
-    hist = load_sbr(cfg["nba"]["path"], "nba")[cols]
-    live = update_results(today=day) if results is None else results
+    hist = pd.read_csv(HISTORY, parse_dates=["date"])[cols]
+    live, source = load_live(day, offline) if results is None else (results, "given")
+    if live.empty:
+        return live
     played = live[live.final & (live.date < day)].copy()
     played["date"] = pd.to_datetime(played.date)
     fixtures = live[live.date == day].copy()
     if fixtures.empty:
+        fixtures.attrs["results_to"] = str(played.date.max().date()) if len(played) else "n/a"
         return fixtures
     fx = fixtures.assign(date=pd.Timestamp(day), hg=0, ag=0)   # placeholders: the day is predicted before any update
     df = pd.concat([hist, played[cols], fx[cols]], ignore_index=True)
@@ -131,7 +151,7 @@ def predict(day: str, cfg: dict, results: pd.DataFrame | None = None) -> pd.Data
     out["b2b"] = [("home " if h else "") + ("away" if a else "") for h, a in zip(tail.b2b_h, tail.b2b_a)]
     order = np.argsort(pd.to_datetime(out.start_utc).to_numpy(), kind="stable")
     out = out.iloc[order].reset_index(drop=True)
-    out.attrs.update(results_to=str(played.date.max().date()), margin_sd=s["margin_sd"], total_sd=s["total_sd"])
+    out.attrs.update(source=source, results_to=str(played.date.max().date()), margin_sd=s["margin_sd"], total_sd=s["total_sd"])
     return out
 
 
@@ -146,9 +166,9 @@ def with_lines(r, home_spread: float, total_line: float, margin_sd: float, total
 
 def table(out: pd.DataFrame, lines: dict | None = None) -> str:
     if out.empty:
-        return "No NBA games on that date."
+        return f"No NBA games on that date (stored results to {out.attrs.get('results_to', 'n/a')})."
     z = np.random.default_rng(1).standard_normal(4000)
-    L = [f"NBA model numbers (results to {out.attrs['results_to']}).",
+    L = [f"NBA model numbers (results to {out.attrs['results_to']}, from the {out.attrs.get('source', 'feed')}).",
          "Information only: in the back-test this model was less accurate than the opening line and showed no edge.", "",
          "| Start (MT) | Game | Model home margin | 90% range | Model total | Home win % | Line (home spread / total) | "
          "Home cover % | Over % | Back-to-back |", "|---|---|---|---|---|---|---|---|---|---|"]

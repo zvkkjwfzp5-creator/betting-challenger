@@ -49,11 +49,20 @@ def cmd_live(a):
     if a.sport == "nba":
         from . import live_nba
         lines = {k: tuple(v) for k, v in json.loads(a.lines).items()} if a.lines else None
-        print(live_nba.table(live_nba.predict(day, _cfg(a.config)), lines))
+        print(live_nba.table(live_nba.predict(day, _cfg(a.config), offline=a.offline), lines))
         return
     from . import live_nhl
     prices = {k: tuple(v) for k, v in json.loads(a.prices).items()} if a.prices else None
-    print(live_nhl.table(live_nhl.predict(day, _cfg(a.config)), prices))
+    print(live_nhl.table(live_nhl.predict(day, _cfg(a.config), offline=a.offline), prices))
+
+
+def cmd_refresh(a):
+    """Fetch current NHL and NBA results and fixtures into live/ (needs the score feeds)."""
+    from . import live_nba, live_nhl
+    for name, mod in (("NHL", live_nhl), ("NBA", live_nba)):
+        r = mod.update_results()
+        done = r[r.final.astype(bool)]
+        print(f"{name}: {len(done)} results to {done.date.max()}, {int((~r.final.astype(bool)).sum())} upcoming fixtures")
 
 
 def cmd_price(a):
@@ -151,7 +160,10 @@ def main():
     lv.add_argument("--lines", help='NBA: JSON of (home spread, total), e.g. {"Knicks@Pacers": [-3.5, 228.5]}')
     lv.add_argument("--date", help="YYYY-MM-DD in Mountain Time; default today")
     lv.add_argument("--prices", help='NHL: JSON of decimal prices, e.g. {"Rangers@Canucks": [1.80, 2.05]} (home, away)')
+    lv.add_argument("--offline", action="store_true", help="use only the results stored in the repository")
     lv.set_defaults(fn=cmd_live)
+    rf = sub.add_parser("refresh")
+    rf.set_defaults(fn=cmd_refresh)
     r = sub.add_parser("report")
     r.set_defaults(fn=cmd_report)
     p = sub.add_parser("price")
