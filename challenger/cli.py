@@ -41,6 +41,17 @@ def cmd_report(a):
     print(md)
 
 
+def cmd_live(a):
+    """Today's model numbers from current results (NHL)."""
+    from . import live_nhl
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    day = a.date or datetime.now(ZoneInfo("America/Edmonton")).date().isoformat()
+    prices = {k: tuple(v) for k, v in json.loads(a.prices).items()} if a.prices else None
+    out = live_nhl.predict(day, _cfg(a.config))
+    print(live_nhl.table(out, prices))
+
+
 def cmd_price(a):
     """Price one fixture. Output is conditional on the model's assumptions and
     never places or sizes a bet: the decision stays manual."""
@@ -130,6 +141,12 @@ def main():
     b.add_argument("--quiet", action="store_true")
     b.add_argument("--sport", default="soccer", choices=["soccer", "nhl", "nba", "ufc"])
     b.set_defaults(fn=cmd_backtest)
+    lv = sub.add_parser("live")
+    lv.add_argument("--config", default="config.toml")
+    lv.add_argument("--sport", default="nhl", choices=["nhl"])
+    lv.add_argument("--date", help="YYYY-MM-DD in Mountain Time; default today")
+    lv.add_argument("--prices", help='JSON of decimal prices, e.g. {"Rangers@Canucks": [1.80, 2.05]} (home, away)')
+    lv.set_defaults(fn=cmd_live)
     r = sub.add_parser("report")
     r.set_defaults(fn=cmd_report)
     p = sub.add_parser("price")
