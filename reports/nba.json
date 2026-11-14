@@ -1,0 +1,980 @@
+{
+ "sport": "NBA",
+ "markets": {
+  "Spread at the opening line (price assumed -110)": {
+   "market": {
+    "n_matches": 7436,
+    "A_market": {
+     "log_loss": 0.6931471805599453,
+     "brier": 0.5,
+     "ece": 0.0002689618074233327,
+     "calibration_slope": 1.0,
+     "n": 7436
+    },
+    "B_existing_raw": {
+     "log_loss": 0.7414008485381535,
+     "brier": 0.5406723673704902,
+     "ece": 0.11820520751961344,
+     "calibration_slope": 0.0003730754234488269,
+     "n": 7436
+    },
+    "B_existing_blend": {
+     "log_loss": 0.6969276064842681,
+     "brier": 0.5037434939405514,
+     "ece": 0.03965064240650266,
+     "calibration_slope": -0.01534284253572034,
+     "n": 7436
+    },
+    "C_new": {
+     "log_loss": 0.7118333914709418,
+     "brier": 0.5173904296957287,
+     "ece": 0.06960851535946251,
+     "calibration_slope": -0.009224525695195924,
+     "n": 7436
+    },
+    "D_combo": {
+     "log_loss": 0.6931801238939757,
+     "brier": 0.5000329355159749,
+     "ece": 0.014396657070404587,
+     "calibration_slope": 0.22499315332835088,
+     "n": 7436
+    },
+    "log_loss_differences": {
+     "B_existing_blend minus A_market": {
+      "mean": 0.003780425924322836,
+      "lo": 0.0018820516298536899,
+      "hi": 0.0057733880184152415,
+      "n": 7436,
+      "p_gt0": 1.0,
+      "q05": 0.0021838063445280696,
+      "seasons_better": "0/6"
+     },
+     "C_new minus A_market": {
+      "mean": 0.018686210910996575,
+      "lo": 0.01388307798960804,
+      "hi": 0.023871559285749605,
+      "n": 7436,
+      "p_gt0": 1.0,
+      "q05": 0.014698791503472365,
+      "seasons_better": "0/6"
+     },
+     "D_combo minus A_market": {
+      "mean": 3.2943334030406165e-05,
+      "lo": -0.00021259855609719847,
+      "hi": 0.0002890587894663146,
+      "n": 7436,
+      "p_gt0": 0.615,
+      "q05": -0.0001737836072395269,
+      "seasons_better": "4/6"
+     },
+     "C_new minus B_existing_raw": {
+      "mean": -0.02956745706721158,
+      "lo": -0.03657148521728242,
+      "hi": -0.022681604389973402,
+      "n": 7436,
+      "p_gt0": 0.0,
+      "q05": -0.03559237719517003,
+      "seasons_better": "6/6"
+     },
+     "D_combo minus B_existing_blend": {
+      "mean": -0.0037474825902924303,
+      "lo": -0.00572173427088186,
+      "hi": -0.0018410541860354667,
+      "n": 7436,
+      "p_gt0": 0.0,
+      "q05": -0.005345890103560131,
+      "seasons_better": "6/6"
+     }
+    }
+   },
+   "ablations": {
+    "C_static": {
+     "mean": 0.06144943668412664,
+     "lo": 0.05068176415254492,
+     "hi": 0.072760567773781,
+     "n": 7436,
+     "p_gt0": 1.0,
+     "q05": 0.052004747064270704
+    },
+    "C_nopool": {
+     "mean": 0.0015167846630658416,
+     "lo": 0.00035386496400191265,
+     "hi": 0.0027261398886896764,
+     "n": 7436,
+     "p_gt0": 0.9945,
+     "q05": 0.0005681877588127364
+    },
+    "C_no_back_to_back": {
+     "mean": 0.002522448786439806,
+     "lo": 0.0012804407122852704,
+     "hi": 0.0037203480279898045,
+     "n": 7436,
+     "p_gt0": 1.0,
+     "q05": 0.0014717016163832046
+    },
+    "C_plugin": {
+     "mean": 0.0018191403344651306,
+     "lo": 0.0015512381122932246,
+     "hi": 0.002095077468540844,
+     "n": 7436,
+     "p_gt0": 1.0,
+     "q05": 0.001595026018354476
+    }
+   },
+   "returns": {
+    "B_existing_rule": {
+     "mean": NaN,
+     "lo": NaN,
+     "hi": NaN,
+     "n": 0,
+     "profit_units": 0.0
+    },
+    "B_blend_edge_ignoring_flag": {
+     "mean": -0.044919808679421316,
+     "lo": -0.07230860037545463,
+     "hi": -0.01724184347107436,
+     "n": 4286,
+     "p_gt0": 0.001,
+     "q05": -0.06823126216958304,
+     "profit_units": -192.52629999999988
+    },
+    "C_new_rule": {
+     "mean": NaN,
+     "lo": NaN,
+     "hi": NaN,
+     "n": 0,
+     "profit_units": 0.0
+    },
+    "D_combo_rule": {
+     "mean": NaN,
+     "lo": NaN,
+     "hi": NaN,
+     "n": 0,
+     "profit_units": 0.0
+    }
+   },
+   "selection": {
+    "candidates_searched": 15124,
+    "seasons_with_no_selection": {
+     "C": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+     ],
+     "D": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+     ]
+    },
+    "n_eval_seasons": 6,
+    "thresholds": {
+     "C": {
+      "2016": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2017": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2018": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2019": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2020": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2021": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      }
+     },
+     "D": {
+      "2016": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2017": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2018": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2019": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2020": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2021": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      }
+     }
+    }
+   },
+   "pool_by_season": {
+    "2014": {
+     "theta": [
+      1.0,
+      0.0476,
+      0.0488
+     ],
+     "ridge": 100.0
+    },
+    "2015": {
+     "theta": [
+      1.0,
+      0.0338,
+      0.0534
+     ],
+     "ridge": 100.0
+    },
+    "2016": {
+     "theta": [
+      1.0,
+      0.0132,
+      0.0292
+     ],
+     "ridge": 100.0
+    },
+    "2017": {
+     "theta": [
+      1.0,
+      0.0105,
+      0.0219
+     ],
+     "ridge": 100.0
+    },
+    "2018": {
+     "theta": [
+      1.0,
+      -0.0017,
+      0.0256
+     ],
+     "ridge": 100.0
+    },
+    "2019": {
+     "theta": [
+      1.0,
+      0.0083,
+      0.0124
+     ],
+     "ridge": 100.0
+    },
+    "2020": {
+     "theta": [
+      1.0,
+      0.0155,
+      0.0165
+     ],
+     "ridge": 100.0
+    },
+    "2021": {
+     "theta": [
+      1.0,
+      0.0022,
+      0.0197
+     ],
+     "ridge": 100.0
+    }
+   },
+   "eval_seasons": [
+    2016,
+    2021
+   ]
+  },
+  "Total at the opening line (price assumed -110)": {
+   "market": {
+    "n_matches": 7474,
+    "A_market": {
+     "log_loss": 0.6931471805599452,
+     "brier": 0.5,
+     "ece": 0.0002675943270002541,
+     "calibration_slope": 1.0,
+     "n": 7474
+    },
+    "B_existing_raw": {
+     "log_loss": 0.7528880971685818,
+     "brier": 0.5468369447873237,
+     "ece": 0.12236137895401575,
+     "calibration_slope": 0.02471685910425209,
+     "n": 7474
+    },
+    "B_existing_blend": {
+     "log_loss": 0.696694264145932,
+     "brier": 0.5034911028262363,
+     "ece": 0.03413281828882716,
+     "calibration_slope": 0.11291329533491018,
+     "n": 7474
+    },
+    "C_new": {
+     "log_loss": 0.7007354794895287,
+     "brier": 0.5072206038440559,
+     "ece": 0.0488590690459257,
+     "calibration_slope": 0.19497735387558124,
+     "n": 7474
+    },
+    "D_combo": {
+     "log_loss": 0.6927304309264054,
+     "brier": 0.49958395954526674,
+     "ece": 0.013791188400800954,
+     "calibration_slope": 1.1344540271462737,
+     "n": 7474
+    },
+    "log_loss_differences": {
+     "B_existing_blend minus A_market": {
+      "mean": 0.0035470835859866415,
+      "lo": 0.0010351074912887854,
+      "hi": 0.006062573635841226,
+      "n": 7474,
+      "p_gt0": 0.998,
+      "q05": 0.0015307184260460005,
+      "seasons_better": "0/6"
+     },
+     "C_new minus A_market": {
+      "mean": 0.007588298929583449,
+      "lo": 0.003634483359816929,
+      "hi": 0.01144277975789422,
+      "n": 7474,
+      "p_gt0": 1.0,
+      "q05": 0.00433101189845245,
+      "seasons_better": "0/6"
+     },
+     "D_combo minus A_market": {
+      "mean": -0.0004167496335399607,
+      "lo": -0.0010641798184403074,
+      "hi": 0.00021102638588613097,
+      "n": 7474,
+      "p_gt0": 0.102,
+      "q05": -0.0009331922041406085,
+      "seasons_better": "5/6"
+     },
+     "C_new minus B_existing_raw": {
+      "mean": -0.05215261767905309,
+      "lo": -0.06546744716705485,
+      "hi": -0.03988362936920149,
+      "n": 7474,
+      "p_gt0": 0.0,
+      "q05": -0.06345308332353851,
+      "seasons_better": "6/6"
+     },
+     "D_combo minus B_existing_blend": {
+      "mean": -0.003963833219526602,
+      "lo": -0.006479506856229777,
+      "hi": -0.001645087955778121,
+      "n": 7474,
+      "p_gt0": 0.0,
+      "q05": -0.005955670360939306,
+      "seasons_better": "6/6"
+     }
+    }
+   },
+   "ablations": {
+    "C_static": {
+     "mean": 0.04305625750899614,
+     "lo": 0.035916558203078625,
+     "hi": 0.05019914910501948,
+     "n": 7474,
+     "p_gt0": 1.0,
+     "q05": 0.037146380928893864
+    },
+    "C_nopool": {
+     "mean": 0.0028538755861404652,
+     "lo": 0.0015764038338580853,
+     "hi": 0.004092699368840994,
+     "n": 7474,
+     "p_gt0": 1.0,
+     "q05": 0.0017601107128540434
+    },
+    "C_no_back_to_back": {
+     "mean": 7.018736675613948e-18,
+     "lo": -2.507287837027649e-17,
+     "hi": 4.028225015130761e-17,
+     "n": 7474,
+     "p_gt0": 0.6505,
+     "q05": -2.0382040497314607e-17
+    },
+    "C_plugin": {
+     "mean": 0.0006550180951584128,
+     "lo": 0.0004930215271644509,
+     "hi": 0.0008241959897449133,
+     "n": 7474,
+     "p_gt0": 1.0,
+     "q05": 0.0005214627254049169
+    }
+   },
+   "returns": {
+    "B_existing_rule": {
+     "mean": NaN,
+     "lo": NaN,
+     "hi": NaN,
+     "n": 0,
+     "profit_units": 0.0
+    },
+    "B_blend_edge_ignoring_flag": {
+     "mean": -0.03291149000868804,
+     "lo": -0.06089207699928153,
+     "hi": -0.004772273282711661,
+     "n": 4604,
+     "p_gt0": 0.0105,
+     "q05": -0.054757442736223495,
+     "profit_units": -151.52449999999988
+    },
+    "C_new_rule": {
+     "mean": NaN,
+     "lo": NaN,
+     "hi": NaN,
+     "n": 0,
+     "profit_units": 0.0
+    },
+    "D_combo_rule": {
+     "mean": NaN,
+     "lo": NaN,
+     "hi": NaN,
+     "n": 0,
+     "profit_units": 0.0
+    }
+   },
+   "selection": {
+    "candidates_searched": 15106,
+    "seasons_with_no_selection": {
+     "C": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+     ],
+     "D": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+     ]
+    },
+    "n_eval_seasons": 6,
+    "thresholds": {
+     "C": {
+      "2016": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2017": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2018": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2019": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2020": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      },
+      "2021": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 25
+      }
+     },
+     "D": {
+      "2016": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 4
+      },
+      "2017": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 6
+      },
+      "2018": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 6
+      },
+      "2019": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 6
+      },
+      "2020": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 6
+      },
+      "2021": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 1
+      }
+     }
+    }
+   },
+   "pool_by_season": {
+    "2014": {
+     "theta": [
+      1.0023,
+      0.2458,
+      -0.0384
+     ],
+     "ridge": 0.0
+    },
+    "2015": {
+     "theta": [
+      1.0,
+      0.1129,
+      -0.0038
+     ],
+     "ridge": 100.0
+    },
+    "2016": {
+     "theta": [
+      1.0,
+      0.1884,
+      0.008
+     ],
+     "ridge": 10.0
+    },
+    "2017": {
+     "theta": [
+      1.0,
+      0.128,
+      0.0016
+     ],
+     "ridge": 100.0
+    },
+    "2018": {
+     "theta": [
+      1.0,
+      0.1136,
+      0.0139
+     ],
+     "ridge": 100.0
+    },
+    "2019": {
+     "theta": [
+      1.0,
+      0.1115,
+      0.0171
+     ],
+     "ridge": 100.0
+    },
+    "2020": {
+     "theta": [
+      1.0,
+      0.1281,
+      0.0095
+     ],
+     "ridge": 100.0
+    },
+    "2021": {
+     "theta": [
+      1.0039,
+      0.1911,
+      0.0101
+     ],
+     "ridge": 0.0
+    }
+   },
+   "eval_seasons": [
+    2016,
+    2021
+   ]
+  },
+  "Win probability (no opening moneyline in the data: scored, not bet)": {
+   "market": {
+    "n_matches": 7562,
+    "A_market": {
+     "log_loss": 0.6100356878392154,
+     "brier": 0.42184590671227906,
+     "ece": 0.02060816036428863,
+     "calibration_slope": 0.910457082098049,
+     "n": 7562
+    },
+    "B_existing_raw": {
+     "log_loss": 0.6516336136008636,
+     "brier": 0.4539860589054767,
+     "ece": 0.049023290614581765,
+     "calibration_slope": 0.6391199513853275,
+     "n": 7562
+    },
+    "B_existing_blend": {
+     "log_loss": 0.612939884195027,
+     "brier": 0.42423146113212884,
+     "ece": 0.01351537819904164,
+     "calibration_slope": 0.916793506445334,
+     "n": 7562
+    },
+    "C_new": {
+     "log_loss": 0.62623112567461,
+     "brier": 0.4365007980421512,
+     "ece": 0.010224256225979804,
+     "calibration_slope": 0.9489202169568788,
+     "n": 7562
+    },
+    "D_combo": {
+     "log_loss": 0.6105151723503607,
+     "brier": 0.4221677845301214,
+     "ece": 0.016351159947607805,
+     "calibration_slope": 0.9073585883851659,
+     "n": 7562
+    },
+    "Z_closing_price_reference": {
+     "log_loss": 0.6051997454811067,
+     "brier": 0.41795600014820034,
+     "ece": 0.008289128083136735,
+     "calibration_slope": 0.938540512157929,
+     "n": 7562
+    },
+    "log_loss_differences": {
+     "B_existing_blend minus A_market": {
+      "mean": 0.0029041963558116782,
+      "lo": 0.0011165647793653353,
+      "hi": 0.004819652996510545,
+      "n": 7562,
+      "p_gt0": 0.9985,
+      "q05": 0.0013834078119342832,
+      "seasons_better": "1/6"
+     },
+     "C_new minus A_market": {
+      "mean": 0.01619543783539475,
+      "lo": 0.011587455599716632,
+      "hi": 0.02104510683390737,
+      "n": 7562,
+      "p_gt0": 1.0,
+      "q05": 0.012380254735824906,
+      "seasons_better": "0/6"
+     },
+     "D_combo minus A_market": {
+      "mean": 0.0004794845111452817,
+      "lo": -0.00013888691015561945,
+      "hi": 0.0011311436568684403,
+      "n": 7562,
+      "p_gt0": 0.942,
+      "q05": -2.697128868906114e-05,
+      "seasons_better": "4/6"
+     },
+     "C_new minus B_existing_raw": {
+      "mean": -0.025402487926253443,
+      "lo": -0.03247135183081436,
+      "hi": -0.01891071763530351,
+      "n": 7562,
+      "p_gt0": 0.0,
+      "q05": -0.031203963893317047,
+      "seasons_better": "6/6"
+     },
+     "D_combo minus B_existing_blend": {
+      "mean": -0.0024247118446663967,
+      "lo": -0.004088930006049528,
+      "hi": -0.0007560406269275979,
+      "n": 7562,
+      "p_gt0": 0.0035,
+      "q05": -0.003830452246575825,
+      "seasons_better": "5/6"
+     }
+    }
+   },
+   "ablations": {
+    "C_static": {
+     "mean": 0.05335521780254863,
+     "lo": 0.04461849694730723,
+     "hi": 0.06270510698495708,
+     "n": 7562,
+     "p_gt0": 1.0,
+     "q05": 0.0456824244148504
+    },
+    "C_nopool": {
+     "mean": 0.0005270850205071504,
+     "lo": -0.0004841182962976095,
+     "hi": 0.0015450832912704672,
+     "n": 7562,
+     "p_gt0": 0.8525,
+     "q05": -0.0003002883517507941
+    },
+    "C_no_back_to_back": {
+     "mean": 0.0018849645057052074,
+     "lo": 0.0008945912055971579,
+     "hi": 0.002912626347819243,
+     "n": 7562,
+     "p_gt0": 1.0,
+     "q05": 0.0010546098035939557
+    },
+    "C_plugin": {
+     "mean": 0.0005781054521544769,
+     "lo": 0.0001234279976825464,
+     "hi": 0.001035061208421634,
+     "n": 7562,
+     "p_gt0": 0.994,
+     "q05": 0.00019129876710822976
+    }
+   },
+   "returns": {},
+   "selection": {
+    "candidates_searched": 0,
+    "seasons_with_no_selection": {
+     "C": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+     ],
+     "D": [
+      2016,
+      2017,
+      2018,
+      2019,
+      2020,
+      2021
+     ]
+    },
+    "n_eval_seasons": 6,
+    "thresholds": {
+     "C": {
+      "2016": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2017": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2018": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2019": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2020": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2021": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      }
+     },
+     "D": {
+      "2016": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2017": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2018": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2019": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2020": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      },
+      "2021": {
+       "thresholds": null,
+       "earlier_roi_lower_bound": 0.0,
+       "rules_tried": 0
+      }
+     }
+    }
+   },
+   "pool_by_season": {
+    "2014": {
+     "theta": [
+      0.9639,
+      0.1055,
+      0.0227
+     ],
+     "ridge": 100.0
+    },
+    "2015": {
+     "theta": [
+      0.9573,
+      0.1153,
+      0.0409
+     ],
+     "ridge": 100.0
+    },
+    "2016": {
+     "theta": [
+      0.8219,
+      0.299,
+      0.0384
+     ],
+     "ridge": 0.0
+    },
+    "2017": {
+     "theta": [
+      0.925,
+      0.1089,
+      0.0199
+     ],
+     "ridge": 100.0
+    },
+    "2018": {
+     "theta": [
+      0.9394,
+      0.079,
+      0.0111
+     ],
+     "ridge": 100.0
+    },
+    "2019": {
+     "theta": [
+      0.9234,
+      0.0785,
+      -0.0018
+     ],
+     "ridge": 100.0
+    },
+    "2020": {
+     "theta": [
+      0.9166,
+      0.0842,
+      0.0069
+     ],
+     "ridge": 100.0
+    },
+    "2021": {
+     "theta": [
+      0.9155,
+      0.0699,
+      0.0013
+     ],
+     "ridge": 100.0
+    }
+   },
+   "eval_seasons": [
+    2016,
+    2021
+   ]
+  }
+ },
+ "meta": {
+  "settings_by_season": {
+   "2012": {
+    "filter": "tau=2.0|q=0.0|jump=0.0|b2b=1",
+    "margin_sd": 12.5,
+    "total_sd": 18.0,
+    "spread_to_win_sd": 12.0
+   },
+   "2013": {
+    "filter": "tau=3.0|q=8.0|jump=0.0|b2b=1",
+    "margin_sd": 12.04,
+    "total_sd": 17.85,
+    "spread_to_win_sd": 10.5
+   },
+   "2014": {
+    "filter": "tau=4.5|q=8.0|jump=2.0|b2b=1",
+    "margin_sd": 11.79,
+    "total_sd": 17.51,
+    "spread_to_win_sd": 11.0
+   },
+   "2015": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 11.78,
+    "total_sd": 17.53,
+    "spread_to_win_sd": 11.0
+   },
+   "2016": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 11.7,
+    "total_sd": 17.48,
+    "spread_to_win_sd": 10.75
+   },
+   "2017": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 11.84,
+    "total_sd": 17.41,
+    "spread_to_win_sd": 11.0
+   },
+   "2018": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 11.9,
+    "total_sd": 17.5,
+    "spread_to_win_sd": 11.0
+   },
+   "2019": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 12.01,
+    "total_sd": 17.69,
+    "spread_to_win_sd": 11.25
+   },
+   "2020": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 12.04,
+    "total_sd": 17.8,
+    "spread_to_win_sd": 11.25
+   },
+   "2021": {
+    "filter": "tau=4.5|q=16.0|jump=0.0|b2b=1",
+    "margin_sd": 12.23,
+    "total_sd": 17.86,
+    "spread_to_win_sd": 11.5
+   }
+  },
+  "matches": 13893,
+  "outer_draws": 200
+ }
+}

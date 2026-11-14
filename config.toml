@@ -1,0 +1,100 @@
+# All tunables live here. Nothing below is fitted on evaluation data:
+# the grids are searched on earlier seasons only (see challenger/backtest.py).
+
+[data]
+path = "data/raw/Matches.csv"
+url = "https://raw.githubusercontent.com/xgabora/Club-Football-Match-Data-2000-2025/main/data/Matches.csv"
+leagues = ["E0", "SP1", "I1", "D1", "F1"]   # top-5 European leagues
+
+[walk_forward]
+first_pred_season = 2005      # filter burn-in before this (O/U odds start 2005)
+first_combo_season = 2008     # combination needs >= 3 earlier seasons of predictions
+first_eval_season = 2011      # selection thresholds need >= 3 earlier seasons of combo bets
+threshold_lookback = 6        # seasons of earlier out-of-sample bets used to pick thresholds
+
+[filter_grid]                 # dynamic hierarchical model, searched chronologically
+tau = [0.15, 0.20, 0.30, 0.45]        # pooling sd of team attack/defence around league baseline
+q_year = [0.0, 0.005, 0.015, 0.04]    # evolution variance per year (0 = static)
+season_jump = [0.0, 0.01, 0.03]       # extra variance at each season break
+promo_delta = [0.15, 0.30]            # prior mean shift for teams entering the league
+nopool_tau = 5.0                      # ablation: effectively no shrinkage
+
+[filter_grid_rw]              # same model, random-walk form (no pull back to the baseline)
+tau = [0.20, 0.30, 0.45]
+q_year = [0.002, 0.005, 0.015]
+season_jump = [0.0, 0.01, 0.03]
+promo_delta = [0.15, 0.30]
+
+[score]
+max_goals = 10
+dc_rho_grid = [-0.15, -0.10, -0.05, 0.0, 0.05]   # Dixon-Coles low-score dependence
+
+[predictive]
+outer_draws = 200             # parameter draws per match (antithetic)
+seed = 20261114
+
+[combine]
+ridge = [0.0, 1.0, 10.0, 100.0]   # shrinkage toward "market alone"; chosen on earlier seasons
+
+[selection]
+ev_min = [0.0, 0.02, 0.04, 0.06, 0.10]
+p_pos_min = [0.5, 0.7, 0.8, 0.9, 0.95]
+lcb_quantile = 0.05           # thresholds must have a positive 5% lower bound on earlier ROI
+min_bets = 100
+
+[champion]                    # the existing model, as described in the scheduled-task prompts
+market_weight = 0.70
+form_games = 10
+flag_gap = 0.07               # "model and market disagree by 7+ pts": flagged, not bet
+
+[bootstrap]
+n = 2000
+seed = 7
+
+# ---------------------------------------------------------------- NHL
+[nhl]
+path = "data/raw/nhl_sbr.json"
+mu0 = 0.96                    # log of ~2.6 regulation goals
+h0 = 0.09
+q_league_year = 0.002
+tau = [0.06, 0.10, 0.15]
+q_year = [0.0, 0.003, 0.010, 0.030]
+season_jump = [0.0, 0.003, 0.010]
+promo_delta = [0.0, 0.10]     # expansion teams
+nopool_tau = 5.0
+tie_inflation_grid = [1.0, 1.10, 1.20, 1.30, 1.40, 1.50, 1.60]
+
+[nhl.stage]
+first_pred_season = 2012
+first_combo_season = 2014
+first_eval_season = 2016
+threshold_lookback = 6
+
+# ---------------------------------------------------------------- NBA
+[nba]
+path = "data/raw/nba_sbr.json"
+tau = [2.0, 3.0, 4.5, 6.0, 8.0]   # points
+q_year = [0.0, 3.0, 8.0, 16.0, 30.0]   # points^2 per year
+season_jump = [0.0, 2.0, 6.0, 12.0, 20.0]
+nopool_tau = 40.0
+assumed_price = 1.9091        # -110: the archive has spread/total lines but no prices
+
+[nba.stage]
+first_pred_season = 2012
+first_combo_season = 2014
+first_eval_season = 2016
+threshold_lookback = 6
+
+# ---------------------------------------------------------------- UFC
+[ufc]
+path = "data/raw/ufc-master.csv"
+tau = [0.4, 0.6, 0.9]         # logit units
+q_year = [0.0, 0.03, 0.10]
+debut_delta = [0.0, 0.2, 0.4]
+nopool_tau = 5.0
+
+[ufc.stage]
+first_pred_season = 2012
+first_combo_season = 2014
+first_eval_season = 2016
+threshold_lookback = 6

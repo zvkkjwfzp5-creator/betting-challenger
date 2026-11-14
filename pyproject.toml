@@ -1,0 +1,12 @@
+[project]
+name = "betting-challenger"
+version = "0.1.0"
+description = "Challenger prediction engine: dynamic hierarchical Poisson state-space model with nested posterior predictive pricing, tested walk-forward against the existing model and the market."
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "pandas>=2.1"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
